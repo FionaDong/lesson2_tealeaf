@@ -1,4 +1,4 @@
-require 'pry'
+# require 'pry'
 
 module Showable
 
@@ -174,9 +174,9 @@ class BlackJack
   end
 
   def one_round
- binding.pry
+ # binding.pry
     if player.hit_bj?
-      binding.pry
+      # binding.pry
       self.winner = player
     else
       while true
@@ -190,28 +190,28 @@ class BlackJack
           dealer.deal(player, shoe)
           
           if player.bust?
-            binding.pry
+            # binding.pry
             self.winner = dealer
             break
           elsif player.hit_bj?
-            binding.pry
+            # binding.pry
             self.winner = player
             break
           end
         when 'stand'
           if dealer.hit_bj?
-            binding.pry
+            # binding.pry
             self.winner = dealer
             break
           end
           while dealer.hit?
             dealer.deal(dealer, shoe)
             if dealer.bust?
-              binding.pry
+              # binding.pry
               self.winner = player
               break
             elsif dealer.hit_bj?
-              binding.pry
+              # binding.pry
               self.winner = dealer
               break
             end 
@@ -225,7 +225,7 @@ class BlackJack
  end   
 
   def who_is_winner
-    binding.pry
+    # binding.pry
     dealer.show
     player.show
     # binding.pry
