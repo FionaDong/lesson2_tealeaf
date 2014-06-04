@@ -1,4 +1,4 @@
-# require 'pry'
+require 'pry'
 
 module Showable
 
@@ -119,14 +119,15 @@ class Person
   end
 
   def hit_bj?
-    calculate_value == 21 ? true : false
+    calculate_value == 21
   end
 
   def bust?
-    calculate_value > 21 ? true : false
+    calculate_value > 21
   end
 
 end
+
 class Dealer < Person
 
   def deal(person, shoe)
@@ -134,14 +135,14 @@ class Dealer < Person
   end
 
   def hit?
-    calculate_value < 17 ? true : false
+    calculate_value < 17
   end
 
 end
 
 class Player < Person; end
 
-class Game
+class BlackJack
   attr_reader :shoe, :dealer, :player
   attr_accessor :winner
 
@@ -150,15 +151,14 @@ class Game
     show_message("Welcome to BlackJack, I am your dealer today, Jack Black. May I know your name?")
     @player = Player.new(gets.chomp)
   end
+    
+  def show_message(message)
+    puts
+    p "=>#{message}"
+    puts
+  end
 
-  def start(num_decks, agian = false)
-    if agian
-      show_message("Welcome back, #{player.name}, Let's go~~")
-      player.cards.clear
-      dealer.cards.clear
-    else
-      show_message("Hello #{player.name}, Let's start~~")
-    end
+  def deliver_first_round(num_decks)
     @shoe = Shoe.new(num_decks)
 
     shoe.scramble!
@@ -171,9 +171,12 @@ class Game
     sleep 1
     show_message("Delivering cards......")
     sleep 1
-# binding.pry
+  end
 
+  def one_round
+ binding.pry
     if player.hit_bj?
+      binding.pry
       self.winner = player
     else
       while true
@@ -187,25 +190,28 @@ class Game
           dealer.deal(player, shoe)
           
           if player.bust?
-            # binding.pry
+            binding.pry
             self.winner = dealer
             break
           elsif player.hit_bj?
-            # binding.pry
+            binding.pry
             self.winner = player
             break
           end
         when 'stand'
           if dealer.hit_bj?
+            binding.pry
             self.winner = dealer
             break
           end
           while dealer.hit?
             dealer.deal(dealer, shoe)
             if dealer.bust?
+              binding.pry
               self.winner = player
               break
             elsif dealer.hit_bj?
+              binding.pry
               self.winner = dealer
               break
             end 
@@ -216,22 +222,16 @@ class Game
         end
       end
     end
-    who_is_winner
-end
-    
-  def show_message(message)
-    puts
-    p "=>#{message}"
-    puts
-  end
+ end   
 
   def who_is_winner
-    # binding.pry
+    binding.pry
     dealer.show
     player.show
     # binding.pry
     if !winner 
       self.winner = player.calculate_value >= dealer.calculate_value ? player : dealer
+      binding.pry
     end
     if winner == dealer
       # binding.pry
@@ -241,21 +241,43 @@ end
     end   
   end
 
+  def play_again?
+    while true  
+      puts "Would you like to play again?(y/n)"
+      
+      case gets.chomp.downcase
+      when 'y'
+        start(1, true)
+      when 'n'
+        puts "See you next time."
+        exit
+      else
+        puts "Sorry? I didn't catch it." 
+      end       
+    end
+  end
+
+  def start(num_decks, agian = false)
+    if agian
+      show_message("Welcome back, #{player.name}, Let's go~~")
+      player.cards.clear
+      dealer.cards.clear
+      #winner needs to be cleared if play again.
+      self.winner = nil
+    else
+      show_message("Hello #{player.name}, Let's start~~")
+    end
+    deliver_first_round(1)
+    one_round
+    who_is_winner
+    play_again?
+  end
+
+
+
 end
 
-blackjack = Game.new('Jack Black')    
-blackjack.start(1)
+game = BlackJack.new('Jack Black')    
+game.start(1)
 
-while true  
-  puts "Would you like to play again?(y/n)"
-  
-  case gets.chomp.downcase
-  when 'y'
-    blackjack.start(1, true)
-  when 'n'
-    puts "See you next time."
-    exit
-  else
-    puts "Sorry? I didn't catch it." 
-  end       
-end
+
