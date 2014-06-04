@@ -48,51 +48,7 @@ module Showable
   end
 end
 
-class Card
-  attr_reader :suit, :value
-  def initialize(suit, value)
-    @suit = suit
-    @value = value
-  end
-end
-
-class Shoe
-  attr_accessor :decks
-  def initialize(num_decks)
-    @decks = []
-    ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'].each do |value|  
-      ['clubs', 'spades','hearts','diamonds'].each do |suit|
-        @decks << Card.new(suit, value)
-      end
-    end
-    self.decks *= num_decks
-  end
-
-  def scramble!
-    decks.shuffle!
-  end
-
-  def deliver
-    decks.pop
-  end
-end
-
-class Person
-  include Showable
-  attr_accessor :name, :cards
-
-  def initialize(name)
-    @name = name
-    @cards = []
-  end
-
-  def show(dealer_hand = false)
-    puts "#{name}'s cards are:"
-    show_cards(cards, dealer_hand)
-    # binding.pry
-    puts "#{name} got #{calculate_value}." if !dealer_hand
-  end
-
+module Hand
   def calculate_value
     v = 0
     cards.each do |card|
@@ -124,6 +80,55 @@ class Person
 
   def bust?
     calculate_value > 21
+  end
+
+end
+
+class Card
+  attr_reader :suit, :value
+  def initialize(suit, value)
+    @suit = suit
+    @value = value
+  end
+end
+
+class Shoe
+  attr_accessor :decks
+  def initialize(num_decks)
+    @decks = []
+    ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'].each do |value|  
+      ['clubs', 'spades','hearts','diamonds'].each do |suit|
+        @decks << Card.new(suit, value)
+      end
+    end
+    self.decks *= num_decks
+  end
+
+  def scramble!
+    decks.shuffle!
+  end
+
+  def deliver
+    decks.pop
+  end
+end
+
+class Person
+  include Showable
+  include Hand
+
+  attr_accessor :name, :cards
+
+  def initialize(name)
+    @name = name
+    @cards = []
+  end
+
+  def show(dealer_hand = false)
+    puts "#{name}'s cards are:"
+    show_cards(cards, dealer_hand)
+    # binding.pry
+    puts "#{name} got #{calculate_value}." if !dealer_hand
   end
 
 end
@@ -231,7 +236,7 @@ class BlackJack
     # binding.pry
     if !winner 
       self.winner = player.calculate_value >= dealer.calculate_value ? player : dealer
-      binding.pry
+      # binding.pry
     end
     if winner == dealer
       # binding.pry
@@ -272,9 +277,7 @@ class BlackJack
     who_is_winner
     play_again?
   end
-
-
-
+  
 end
 
 game = BlackJack.new('Jack Black')    
