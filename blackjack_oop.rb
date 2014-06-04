@@ -258,12 +258,4 @@ while true
   else
     puts "Sorry? I didn't catch it." 
   end       
-end 
-
-
-# dealer = Dealer.new('Jack Black')
-
-# dealer.cards.push(Card.new('hearts',4))
-# dealer.cards.push(Card.new('hearts',6))
-
-# puts dealer.calculate_value
+end
